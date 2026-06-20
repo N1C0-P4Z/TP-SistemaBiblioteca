@@ -8,6 +8,8 @@ obj/
 
 ## SQLite database (generada por EnsureCreated)
 Biblioteca_PazReyes_Moloeznik/biblioteca.db
+Biblioteca_PazReyes_Moloeznik/biblioteca.db-shm
+Biblioteca_PazReyes_Moloeznik/biblioteca.db-wal
 
 .atl/
 

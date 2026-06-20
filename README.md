@@ -3,3 +3,6 @@
 ## Integrantes
 * Martin Moloeznik
 * Nicolas Paz Reyes
+
+Utilizamos La version de dotnet 8.
+Ambos utilizamos Linux.
