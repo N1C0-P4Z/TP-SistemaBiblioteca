@@ -1,5 +1,5 @@
 ﻿using Biblioteca_PazReyes_Moloeznik.Datos;
-using Microsoft.EntityFrameworkCore;
+using Biblioteca_PazReyes_Moloeznik.Negocio;
 
 namespace Biblioteca_PazReyes_Moloeznik;
 
@@ -9,15 +9,46 @@ class Program
     {
         using var context = new BibliotecaContext();
         context.Database.EnsureCreated();
-        
-        Console.WriteLine("Libros disponibles en la biblioteca:");
-        Console.WriteLine("------------------------------------");
-        
-        foreach (var libro in context.Libros.ToList())
+
+        var service = new BibliotecaService(context);
+
+        string? opcion;
+        do
         {
-            int disponibles = libro.CantidadCopias;
-            // mas adelante se restaran los prestamos activos
-            Console.WriteLine($"ISBN: {libro.ISBN} | {libro.Titulo} - {libro.Autor} ({libro.Genero}) | Copias: {libro.CantidadCopias}");
-        }
+            Console.Clear();
+            Console.WriteLine("=== SISTEMA DE BIBLIOTECA ===");
+            Console.WriteLine("1. Prestar libro");
+            Console.WriteLine("2. Devolver libro");
+            Console.WriteLine("3. Detalle de socio");
+            Console.WriteLine("4. Salir");
+            Console.Write("Seleccione una opcion: ");
+            opcion = Console.ReadLine();
+
+            switch (opcion)
+            {
+                case "1":
+                    service.PrestarLibro();
+                    break;
+                case "2":
+                    service.DevolverLibro();
+                    break;
+                case "3":
+                    service.MostrarDetalleSocio();
+                    break;
+                case "4":
+                    Console.WriteLine("Gracias por usar el sistema.");
+                    break;
+                default:
+                    Console.WriteLine("Opcion invalida.");
+                    break;
+            }
+
+            if (opcion != "4")
+            {
+                Console.WriteLine();
+                Console.Write("Presione una tecla para continuar...");
+                Console.ReadKey();
+            }
+        } while (opcion != "4");
     }
 }
