@@ -1,0 +1,21 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.userprefs
+
+## SQLite database (generada por EnsureCreated)
+Biblioteca_PazReyes_Moloeznik/biblioteca.db
+
+.atl/
+
+## Visual Studio / JetBrains
+.vs/
+.idea/
+*.DotSettings
+
+## OS
+.DS_Store
+Thumbs.db
