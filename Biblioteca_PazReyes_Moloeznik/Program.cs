@@ -19,8 +19,9 @@ class Program
             Console.WriteLine("=== SISTEMA DE BIBLIOTECA ===");
             Console.WriteLine("1. Prestar libro");
             Console.WriteLine("2. Devolver libro");
-            Console.WriteLine("3. Detalle de socio");
-            Console.WriteLine("4. Salir");
+            Console.WriteLine("3. Reservar libro");
+            Console.WriteLine("4. Detalle de socio");
+            Console.WriteLine("5. Salir");
             Console.Write("Seleccione una opcion: ");
             opcion = Console.ReadLine();
 
@@ -33,9 +34,12 @@ class Program
                     service.DevolverLibro();
                     break;
                 case "3":
-                    service.MostrarDetalleSocio();
+                    service.ReservarLibro();
                     break;
                 case "4":
+                    service.MostrarDetalleSocio();
+                    break;
+                case "5":
                     Console.WriteLine("Gracias por usar el sistema.");
                     break;
                 default:
@@ -43,12 +47,12 @@ class Program
                     break;
             }
 
-            if (opcion != "4")
+            if (opcion != "5")
             {
                 Console.WriteLine();
                 Console.Write("Presione una tecla para continuar...");
                 Console.ReadKey();
             }
-        } while (opcion != "4");
+        } while (opcion != "5");
     }
 }
