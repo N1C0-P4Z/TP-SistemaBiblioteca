@@ -69,7 +69,13 @@ public class BibliotecaService
         Libro libroSeleccionado = libros[opcionLibro - 1];
 
         if (!CopiasDisponibles(libroSeleccionado))
+        {
+            Console.Write("No hay copias disponibles. ¿Desea reservarlo? (S/N): ");
+            string? respuesta = Console.ReadLine();
+            if (respuesta?.Trim().ToUpper() == "S")
+                CrearReserva(socio, libroSeleccionado);
             return;
+        }
 
         if (!ValidarLimiteLibros(socio))
             return;
@@ -241,32 +247,7 @@ public class BibliotecaService
         }
 
         Libro libroSeleccionado = libros[opcionLibro - 1];
-
-        List<Reserva> reservasActivas = _context.Reservas
-            .Where(r => r.SocioId == nroSocio && r.LibroId == libroSeleccionado.ISBN && r.EstadoReservaId == 1)
-            .ToList();
-
-        if (reservasActivas.Count > 0)
-        {
-            Console.WriteLine("Ya tiene una reserva pendiente para este libro.");
-            return;
-        }
-
-        Reserva reserva = new Reserva
-        {
-            SocioId = socio.NroSocio,
-            LibroId = libroSeleccionado.ISBN,
-            FechaReserva = FormatFecha(DateTime.Now),
-            EstadoReservaId = 1
-        };
-
-        _context.Reservas.Add(reserva);
-        _context.SaveChanges();
-
-        Console.WriteLine($"Reserva registrada exitosamente.");
-        Console.WriteLine($"Socio: {socio.Nombre} {socio.Apellido}");
-        Console.WriteLine($"Libro: {libroSeleccionado.Titulo}");
-        Console.WriteLine($"Se le notificara cuando el libro este disponible.");
+        CrearReserva(socio, libroSeleccionado);
     }
 
     public void MostrarDetalleSocio()
@@ -392,11 +373,38 @@ public class BibliotecaService
 
         if (disponibles <= 0)
         {
-            Console.WriteLine($"No hay copias disponibles de {libro.Titulo}.");
-            Console.WriteLine("Puede reservar el libro desde el menu principal (opcion 3).");
             return false;
         }
         return true;
+    }
+
+    private void CrearReserva(Socio socio, Libro libro)
+    {
+        List<Reserva> reservasActivas = _context.Reservas
+            .Where(r => r.SocioId == socio.NroSocio && r.LibroId == libro.ISBN && r.EstadoReservaId == 1)
+            .ToList();
+
+        if (reservasActivas.Count > 0)
+        {
+            Console.WriteLine("Ya tiene una reserva pendiente para este libro.");
+            return;
+        }
+
+        Reserva reserva = new Reserva
+        {
+            SocioId = socio.NroSocio,
+            LibroId = libro.ISBN,
+            FechaReserva = FormatFecha(DateTime.Now),
+            EstadoReservaId = 1
+        };
+
+        _context.Reservas.Add(reserva);
+        _context.SaveChanges();
+
+        Console.WriteLine($"Reserva registrada exitosamente.");
+        Console.WriteLine($"Socio: {socio.Nombre} {socio.Apellido}");
+        Console.WriteLine($"Libro: {libro.Titulo}");
+        Console.WriteLine($"Se le notificara cuando el libro este disponible.");
     }
 
     private bool ValidarLimiteLibros(Socio socio)
