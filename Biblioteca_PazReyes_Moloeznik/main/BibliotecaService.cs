@@ -397,6 +397,41 @@ public class BibliotecaService
         }
     }
 
+    public void MostrarDisponibilidadLibro()
+    {
+        Console.Write("Ingrese ISBN o titulo del libro: ");
+        string? texto = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(texto))
+        {
+            Console.WriteLine("Debe ingresar un valor.");
+            return;
+        }
+
+        List<Libro> libros = _context.Libros
+            .Where(l => l.ISBN.Contains(texto) || l.Titulo.Contains(texto))
+            .ToList();
+
+        if (libros.Count == 0)
+        {
+            Console.WriteLine("No se encontraron libros con ese criterio.");
+            return;
+        }
+
+        Console.WriteLine("=== DISPONIBILIDAD ===");
+        foreach (var l in libros)
+        {
+            int prestados = _context.Prestamos.Count(p => p.LibroId == l.ISBN && p.EstadoPrestamoId == 1);
+            int disponibles = l.CantidadCopias - prestados;
+            int reservasPendientes = _context.Reservas.Count(r => r.LibroId == l.ISBN && r.EstadoReservaId == 1);
+
+            Console.WriteLine($"{l.Titulo} - {l.Autor}");
+            Console.WriteLine($"  Copias totales: {l.CantidadCopias}");
+            Console.WriteLine($"  Prestadas: {prestados}");
+            Console.WriteLine($"  Disponibles: {disponibles}");
+            Console.WriteLine($"  Reservas pendientes: {reservasPendientes}");
+        }
+    }
+
     private Socio? BuscarSocio(int nroSocio)
     {
         return _context.Socios
