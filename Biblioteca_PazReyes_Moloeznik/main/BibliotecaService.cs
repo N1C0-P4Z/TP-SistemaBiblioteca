@@ -151,22 +151,25 @@ public class BibliotecaService
         prestamo.EstadoPrestamoId = 2;
 
         DateTime fechaVenc = ParseFecha(prestamo.FechaVencimiento);
-        DateTime fechaDev = DateTime.Now;
+        DateTime hoy = DateTime.Today;
 
-        if (fechaDev > fechaVenc)
+        if (hoy > fechaVenc)
         {
-            int diasDemora = (fechaDev - fechaVenc).Days;
+            int diasDemora = (hoy - fechaVenc).Days;
             decimal multaDiaria = socio.TipoSocio?.MultaDiaria ?? 150m;
             decimal montoMulta = diasDemora * multaDiaria;
 
-            Multa multa = new Multa
+            if (montoMulta > 0)
             {
-                PrestamoId = prestamo.Id,
-                SocioId = socio.NroSocio,
-                Monto = montoMulta,
-                Pagada = 0
-            };
-            _context.Multas.Add(multa);
+                Multa multa = new Multa
+                {
+                    PrestamoId = prestamo.Id,
+                    SocioId = socio.NroSocio,
+                    Monto = montoMulta,
+                    Pagada = 0
+                };
+                _context.Multas.Add(multa);
+            }
 
             Console.WriteLine($"Devolucion con demora de {diasDemora} dias. Multa generada: ${montoMulta}");
         }
@@ -349,7 +352,7 @@ public class BibliotecaService
     public void MostrarSociosConMultas()
     {
         var socios = _context.Multas
-            .Where(m => m.Pagada == 0)
+            .Where(m => m.Pagada == 0 && m.Monto > 0)
             .Include(m => m.Socio)
             .ToList()
             .GroupBy(m => new { m.Socio!.NroSocio, m.Socio.Nombre, m.Socio.Apellido })
