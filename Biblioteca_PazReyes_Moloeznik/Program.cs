@@ -21,7 +21,8 @@ class Program
             Console.WriteLine("2. Devolver libro");
             Console.WriteLine("3. Reservar libro");
             Console.WriteLine("4. Detalle de socio");
-            Console.WriteLine("5. Salir");
+            Console.WriteLine("5. Libros mas prestados");
+            Console.WriteLine("6. Salir");
             Console.Write("Seleccione una opcion: ");
             opcion = Console.ReadLine();
 
@@ -40,6 +41,9 @@ class Program
                     service.MostrarDetalleSocio();
                     break;
                 case "5":
+                    service.MostrarLibrosMasPrestados();
+                    break;
+                case "6":
                     Console.WriteLine("Gracias por usar el sistema.");
                     break;
                 default:
@@ -47,12 +51,12 @@ class Program
                     break;
             }
 
-            if (opcion != "5")
+            if (opcion != "6")
             {
                 Console.WriteLine();
                 Console.Write("Presione una tecla para continuar...");
                 Console.ReadKey();
             }
-        } while (opcion != "5");
+        } while (opcion != "6");
     }
 }

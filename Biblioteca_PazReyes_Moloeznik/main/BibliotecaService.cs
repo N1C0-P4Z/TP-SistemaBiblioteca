@@ -322,6 +322,30 @@ public class BibliotecaService
         }
     }
 
+    // Reportes
+    public void MostrarLibrosMasPrestados()
+    {
+        var top = _context.Libros
+            .Select(l => new {
+                l.Titulo,
+                l.Autor,
+                Total = _context.Prestamos.Count(p => p.LibroId == l.ISBN)
+            })
+            .OrderByDescending(x => x.Total)
+            .Take(5)
+            .ToList();
+
+        Console.WriteLine("=== LIBROS MAS PRESTADOS ===");
+        if (top.Count == 0)
+        {
+            Console.WriteLine("No hay prestamos registrados.");
+            return;
+        }
+
+        for (int i = 0; i < top.Count; i++)
+            Console.WriteLine($"{i + 1}. {top[i].Titulo} - {top[i].Autor} ({top[i].Total} prestamos)");
+    }
+
     private Socio? BuscarSocio(int nroSocio)
     {
         return _context.Socios
