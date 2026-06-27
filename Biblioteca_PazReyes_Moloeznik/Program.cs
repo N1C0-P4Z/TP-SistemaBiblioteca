@@ -23,7 +23,8 @@ class Program
             Console.WriteLine("4. Detalle de socio");
             Console.WriteLine("5. Libros mas prestados");
             Console.WriteLine("6. Socios con multas");
-            Console.WriteLine("7. Salir");
+            Console.WriteLine("7. Prestamos vencidos");
+            Console.WriteLine("8. Salir");
             Console.Write("Seleccione una opcion: ");
             opcion = Console.ReadLine();
 
@@ -48,6 +49,9 @@ class Program
                     service.MostrarSociosConMultas();
                     break;
                 case "7":
+                    service.MostrarPrestamosVencidos();
+                    break;
+                case "8":
                     Console.WriteLine("Gracias por usar el sistema.");
                     break;
                 default:
@@ -55,12 +59,12 @@ class Program
                     break;
             }
 
-            if (opcion != "7")
+            if (opcion != "8")
             {
                 Console.WriteLine();
                 Console.Write("Presione una tecla para continuar...");
                 Console.ReadKey();
             }
-        } while (opcion != "7");
+        } while (opcion != "8");
     }
 }

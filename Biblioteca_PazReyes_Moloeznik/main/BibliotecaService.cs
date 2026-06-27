@@ -368,6 +368,32 @@ public class BibliotecaService
             Console.WriteLine($"#{s.NroSocio} {s.Nombre} {s.Apellido} - Total: ${s.Total}");
     }
 
+    public void MostrarPrestamosVencidos()
+    {
+        DateTime hoy = DateTime.Now;
+        var vencidos = _context.Prestamos
+            .Include(p => p.Socio)
+            .Include(p => p.Libro)
+            .Where(p => p.EstadoPrestamoId == 1)
+            .ToList()
+            .Where(p => ParseFecha(p.FechaVencimiento) < hoy)
+            .OrderByDescending(p => ParseFecha(p.FechaVencimiento))
+            .ToList();
+
+        Console.WriteLine("=== PRESTAMOS VENCIDOS ===");
+        if (vencidos.Count == 0)
+        {
+            Console.WriteLine("No hay prestamos vencidos.");
+            return;
+        }
+
+        foreach (var p in vencidos)
+        {
+            int diasVencido = (hoy - ParseFecha(p.FechaVencimiento)).Days;
+            Console.WriteLine($"Socio: {p.Socio?.Nombre} {p.Socio?.Apellido} | Libro: {p.Libro?.Titulo} | Vence: {p.FechaVencimiento} | {diasVencido} dias vencido");
+        }
+    }
+
     private Socio? BuscarSocio(int nroSocio)
     {
         return _context.Socios
