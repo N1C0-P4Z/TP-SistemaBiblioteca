@@ -346,6 +346,28 @@ public class BibliotecaService
             Console.WriteLine($"{i + 1}. {top[i].Titulo} - {top[i].Autor} ({top[i].Total} prestamos)");
     }
 
+    public void MostrarSociosConMultas()
+    {
+        var socios = _context.Multas
+            .Where(m => m.Pagada == 0)
+            .Include(m => m.Socio)
+            .ToList()
+            .GroupBy(m => new { m.Socio!.NroSocio, m.Socio.Nombre, m.Socio.Apellido })
+            .Select(g => new { g.Key.NroSocio, g.Key.Nombre, g.Key.Apellido, Total = g.Sum(m => m.Monto) })
+            .OrderByDescending(x => x.Total)
+            .ToList();
+
+        Console.WriteLine("=== SOCIOS CON MULTAS PENDIENTES ===");
+        if (socios.Count == 0)
+        {
+            Console.WriteLine("No hay socios con multas pendientes.");
+            return;
+        }
+
+        foreach (var s in socios)
+            Console.WriteLine($"#{s.NroSocio} {s.Nombre} {s.Apellido} - Total: ${s.Total}");
+    }
+
     private Socio? BuscarSocio(int nroSocio)
     {
         return _context.Socios
