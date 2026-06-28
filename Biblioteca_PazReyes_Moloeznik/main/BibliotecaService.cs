@@ -432,6 +432,59 @@ public class BibliotecaService
         }
     }
 
+    public void MostrarHistorialSocio()
+    {
+        Console.Write("Ingrese el numero de socio: ");
+        string? input = Console.ReadLine();
+        if (!int.TryParse(input, out int nroSocio))
+        {
+            Console.WriteLine("Numero de socio invalido.");
+            return;
+        }
+
+        Socio? socio = _context.Socios
+            .Include(s => s.TipoSocio)
+            .FirstOrDefault(s => s.NroSocio == nroSocio);
+
+        if (socio == null)
+        {
+            Console.WriteLine($"Socio {nroSocio} no encontrado.");
+            return;
+        }
+
+        Console.WriteLine($"=== HISTORIAL DE {socio.Nombre} {socio.Apellido} ===");
+
+        Console.WriteLine();
+        Console.WriteLine("--- Prestamos ---");
+        List<Prestamo> prestamos = _context.Prestamos
+            .Include(p => p.Libro)
+            .Include(p => p.EstadoPrestamo)
+            .Where(p => p.SocioId == nroSocio)
+            .OrderByDescending(p => p.FechaPrestamo)
+            .ToList();
+
+        if (prestamos.Count == 0)
+            Console.WriteLine("Sin prestamos registrados.");
+        else
+            foreach (var p in prestamos)
+                Console.WriteLine($"  {p.Libro?.Titulo} | Prestado: {p.FechaPrestamo} | Devuelto: {p.FechaDevolucion ?? "-"} | Estado: {p.EstadoPrestamo?.Descripcion}");
+
+        Console.WriteLine();
+        Console.WriteLine("--- Reservas ---");
+        List<Reserva> reservas = _context.Reservas
+            .Include(r => r.Libro)
+            .Include(r => r.EstadoReserva)
+            .Where(r => r.SocioId == nroSocio)
+            .OrderByDescending(r => r.FechaReserva)
+            .ToList();
+
+        if (reservas.Count == 0)
+            Console.WriteLine("Sin reservas registradas.");
+        else
+            foreach (var r in reservas)
+                Console.WriteLine($"  {r.Libro?.Titulo} | Fecha: {r.FechaReserva} | Estado: {r.EstadoReserva?.Descripcion}");
+    }
+
     private Socio? BuscarSocio(int nroSocio)
     {
         return _context.Socios
